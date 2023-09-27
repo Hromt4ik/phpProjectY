@@ -63,18 +63,5 @@ WHERE Lot.Id = ?";
     }
 }
 
-function filed_in(string|int $field): bool
-{
- return isset($_POST[$field]);
-}
 
-function validate($fields)
-{
-    $error_codes = [];
-    return $error_codes;
-}
-function check_correct_date($date): bool{
-
-    return is_date_valid($_POST[$date]);
-}
 
