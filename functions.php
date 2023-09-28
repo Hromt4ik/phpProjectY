@@ -36,8 +36,7 @@ function get_lots(mysqli $con): array
 }
 
 
-function get_lot_by_id(mysqli $con, int $lot_id): array|int
-{
+function get_lot_by_id(mysqli $con, int $lot_id) {
     $sql = "SELECT 
     Lot.Id, 
     `NameLot`,
