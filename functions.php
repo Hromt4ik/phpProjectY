@@ -21,7 +21,7 @@ function get_dt_range(string $date): array
 
 function get_categories(mysqli $con): array
 {
-    $sql = "SELECT * FROM `Category`;";
+    $sql = "SELECT * FROM `Category`";
     return mysqli_fetch_all(mysqli_query($con, $sql), MYSQLI_ASSOC);
 }
 
@@ -36,7 +36,8 @@ function get_lots(mysqli $con): array
 }
 
 
-function get_lot_by_id(mysqli $con, int $lot_id) {
+function get_lot_by_id(mysqli $con, int $lot_id): array|int
+{
     $sql = "SELECT 
     Lot.Id, 
     `NameLot`,
@@ -61,6 +62,29 @@ WHERE Lot.Id = ?";
         return $rows[0];
     }
 }
+
+function add_lot(
+    string $NameLot,
+    string $Detail,
+    string $Image,
+    int $StartPrise,
+    string $DateEnd,
+    int $StepBet,
+    int $CategoryId,
+    mysqli $con
+): int {
+    $AuthorId = 2;
+    $sql = "INSERT INTO Lot( NameLot, Detail, Image, StartPrise, DateEnd, StepBet, AuthorId, CategoryId)
+            VALUES ( ?,?,?,?,?,?,?,?)";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'sssisiii', $NameLot, $Detail, $Image, $StartPrise, $DateEnd, $StepBet, $AuthorId, $CategoryId);
+    mysqli_stmt_execute($stmt);
+    return $con -> insert_id;
+}
+
+
+
+
 
 
 
