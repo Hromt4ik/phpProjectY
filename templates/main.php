@@ -33,14 +33,14 @@
                                 <span class="lot__amount">Стартовая цена</span>
                                 <span class="lot__cost"><?= format_price($item['StartPrise']) ?></span>
                             </div>
-
-                            <?php if(get_dt_range($item['DateEnd'])[0] >= 24): ?>
+                            <?php $time_end = get_dt_range($item['DateEnd']) ?>
+                            <?php if(intval($time_end[0]) >= 24): ?>
                             <div class="lot__timer timer ">
-                                <?= get_dt_range($item['DateEnd'])[0]?>:<?= get_dt_range($item['DateEnd'])[1]?>
+                                <?= $time_end[0]?>:<?= $time_end[1]?>
                             </div>
                             <?php else: ?>
                                 <div class="lot__timer timer timer--finishing">
-                                    <?= get_dt_range($item['DateEnd'])[0]?>:<?= get_dt_range($item['DateEnd'])[1]?>
+                                    <?= $time_end[0]?>:<?= $time_end[1]?>
                                 </div>
                             <?php endif; ?>
                         </div>
