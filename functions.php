@@ -1,20 +1,21 @@
 <?php
 
+const MINUTES_IN_HOUR = 60;
+const SECOND_IN_MINUTE = 60;
+const HOUR_IN_DAY = 24;
+
 function format_price(int $num): string
 {
-    return number_format($num, 0, ",", " ") . " ₽";
+    return number_format($num, thousands_separator: " ") . " ₽";
 }
 
 
 function get_dt_range(string $date): array
 {
-    $minutes_in_hour = 60;
-    $seconds_in_minute = 60;
-
     date_default_timezone_set("Asia/Yekaterinburg");
-    $minutes = floor((strtotime($date) - time()) / $seconds_in_minute);
-    $hours = floor($minutes / $minutes_in_hour);
-    $minutes = $minutes - ($hours * $minutes_in_hour);
+    $minutes = floor(((strtotime($date) + (SECOND_IN_MINUTE * MINUTES_IN_HOUR * HOUR_IN_DAY)) - time()) / SECOND_IN_MINUTE);
+    $hours = floor($minutes / MINUTES_IN_HOUR);
+    $minutes = $minutes - ($hours * SECOND_IN_MINUTE);
     #добавляем одну минуту чтобы общее время в минутах было не 59, а 00
     return [str_pad($hours, 2, "0", STR_PAD_LEFT), str_pad($minutes + 1, 2, "0", STR_PAD_LEFT)];
 }
@@ -30,13 +31,15 @@ function get_lots(mysqli $con): array
     $sql = "SELECT Lot.Id,`NameLot`, `StartPrise`, `Image`, Category.NameCategory, `DateEnd`
             FROM `Lot`
                      INNER JOIN Category ON Lot.CategoryId = Category.Id
-            WHERE `DateEnd` > NOW()
+            WHERE `DateEnd` >= CURRENT_DATE
+
             ORDER BY `DateCreate` DESC";
+
     return mysqli_fetch_all(mysqli_query($con, $sql), MYSQLI_ASSOC);
 }
 
 
-function get_lot_by_id(mysqli $con, int $lot_id): array|int
+function get_lot_by_id(mysqli $con, int $lot_id): array|null
 {
     $sql = "SELECT 
     Lot.Id, 
@@ -54,13 +57,12 @@ WHERE Lot.Id = ?";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 'i', $lot_id);
     mysqli_stmt_execute($stmt);
-    $select_res  = mysqli_stmt_get_result($stmt);
-    $rows = mysqli_fetch_all($select_res, MYSQLI_ASSOC);
-    if(mysqli_num_rows($select_res) === 0) {
-        return http_response_code(404);
-    } else {
-        return $rows[0];
+    $select_res = mysqli_stmt_get_result($stmt);
+    $rows = mysqli_fetch_assoc($select_res);
+    if (mysqli_num_rows($select_res) === 0) {
+        http_response_code(404);
     }
+    return $rows;
 }
 
 function add_lot(
@@ -79,12 +81,5 @@ function add_lot(
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 'sssisiii', $NameLot, $Detail, $Image, $StartPrise, $DateEnd, $StepBet, $AuthorId, $CategoryId);
     mysqli_stmt_execute($stmt);
-    return $con -> insert_id;
+    return $con->insert_id;
 }
-
-
-
-
-
-
-

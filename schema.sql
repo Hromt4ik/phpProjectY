@@ -49,19 +49,3 @@ create table Bet(
     FOREIGN KEY (UserId) REFERENCES  User(Id) ON DELETE CASCADE,
     FOREIGN KEY (LotId) REFERENCES  Lot(id) ON DELETE CASCADE
 );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -4,20 +4,18 @@ require_once('helpers.php');
 require_once('init.php');
 
 
-if (!isset($_GET['Id']) || http_response_code() === 404) {
+$categories = get_categories($con);
+$nav = include_template('categories.php', ['categories' => $categories]);
 
-    $page_content = include_template('404.php', ['categories' => get_categories($con)]);
-}
-
-$lot = get_lot_by_id($con, $_GET['Id']);
-
+$Id = $_GET['Id'] ?? -1;
+$lot = get_lot_by_id($con, $Id);
 
 if (http_response_code() === 404) {
-    $page_content = include_template('404.php', ['categories' => get_categories($con)]);
+    $page_content = include_template('404.php', ['nav' => $nav]);
 } else {
-    $page_content = include_template('detail_lot.php', ['lot' => $lot, 'categories' => get_categories($con)]);
+    $page_content = include_template('detail_lot.php', ['lot' => $lot, 'nav' => $nav]);
 }
 $layout = include_template('layout.php', ['title' => 'Главная', 'is_auth' => $is_auth,
-    'user_name' => $user_name, 'categories' => get_categories($con), 'contetnt' => $page_content]);
+    'user_name' => $user_name, 'nav' => $nav, 'contetnt' => $page_content]);
 
 print($layout);

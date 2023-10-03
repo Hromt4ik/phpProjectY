@@ -80,6 +80,4 @@ FROM `Bet`
          INNER JOIN `User` ON Bet.UserId = User.Id
          INNER JOIN `Lot` ON Bet.LotId = Lot.Id
 WHERE Lot.Id = 5
-ORDER BY Bet.DateCreate;
-
-
+ORDER BY Bet.DateCreate DESC;

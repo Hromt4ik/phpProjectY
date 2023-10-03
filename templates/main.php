@@ -34,15 +34,9 @@
                                 <span class="lot__cost"><?= format_price($item['StartPrise']) ?></span>
                             </div>
                             <?php $time_end = get_dt_range($item['DateEnd']) ?>
-                            <?php if(intval($time_end[0]) >= 24): ?>
-                            <div class="lot__timer timer ">
-                                <?= $time_end[0]?>:<?= $time_end[1]?>
+                            <div class="lot__timer <?php if($time_end[0] < "24"):?>timer--finishing<?php endif?> timer ">
+                                <?= "$time_end[0]:$time_end[1]"?>
                             </div>
-                            <?php else: ?>
-                                <div class="lot__timer timer timer--finishing">
-                                    <?= $time_end[0]?>:<?= $time_end[1]?>
-                                </div>
-                            <?php endif; ?>
                         </div>
                     </div>
                 </li>

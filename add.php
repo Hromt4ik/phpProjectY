@@ -3,6 +3,8 @@ require_once('functions.php');
 require_once('helpers.php');
 require_once('init.php');
 
+$categories = get_categories($con);
+$nav = include_template('categories.php', ['categories' => $categories]);
 function getPostVal($name)
 {
     return $_POST[$name] ?? "";
@@ -95,8 +97,10 @@ if (empty($errors)) {
     [$field] = ""; 
     }
 
+
+
     if (http_response_code() === 404) {
-        $page_content = include_template('404.php', ['categories' => get_categories($con)]);
+        $page_content = include_template('404.php', ['nav' => $nav]);
     } else {
         $page_content = header('Location: /lot.php?Id=' . $addLot);
     }
@@ -104,19 +108,19 @@ if (empty($errors)) {
         'title' => 'Главная',
         'is_auth' => $is_auth,
         'user_name' => $user_name,
-        'categories' => get_categories($con),
+        'nav' => $nav,
         'contetnt' => $page_content
     ]);
 
     print($layout);
 
 } else {
-    $page_content = include_template('add-lot.php', ['categories' => get_categories($con), 'errors' => $errors]);
+    $page_content = include_template('add-lot.php', [ 'errors' => $errors , 'nav' => $nav, 'categories' => $categories]);
     $layout = include_template('layout.php', [
         'title' => 'Главная',
         'is_auth' => $is_auth,
         'user_name' => $user_name,
-        'categories' => get_categories($con),
+        'nav' => $nav,
         'contetnt' => $page_content
     ]);
     print($layout);

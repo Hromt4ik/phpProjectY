@@ -1,14 +1,6 @@
 
     <main>
-        <nav class="nav">
-            <ul class="nav__list container">
-                <?php foreach ($categories as $item): ?>
-                    <li class="nav__item">
-                        <a href="pages/all-lots.html"><?= htmlspecialchars($item['NameCategory']) ?></a>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        </nav>
+    <?= $nav?>
         <section class="lot-item container">
             <h2><?= $lot['NameLot']?></h2>
             <div class="lot-item__content">
@@ -21,15 +13,11 @@
                 </div>
                 <div class="lot-item__right">
                     <div class="lot-item__state">
-                        <?php if(get_dt_range($lot['DateEnd'])[0] >= 24): ?>
-                            <div class="lot-item__timer timer ">
-                                <?= get_dt_range($lot['DateEnd'])[0]?>:<?= get_dt_range($lot['DateEnd'])[1]?>
+                    <?php $time_end = get_dt_range($lot['DateEnd']) ?>
+                        
+                            <div class="lot-item__timer <?php if($time_end[0] < "24"): ?>timer--finishing <?php endif;?> timer ">
+                                <?= "$time_end[0]:$time_end[1]"?>
                             </div>
-                        <?php else: ?>
-                            <div class="lot-item__timer timer timer--finishing">
-                                <?= get_dt_range($lot['DateEnd'])[0]?>:<?= get_dt_range($lot['DateEnd'])[1]?>
-                            </div>
-                        <?php endif; ?>
                         <div class="lot-item__cost-state">
                             <div class="lot-item__rate">
                                 <span class="lot-item__amount">Текущая цена</span>
