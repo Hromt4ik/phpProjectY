@@ -87,8 +87,12 @@ function add_lot(
     return $con->insert_id;
 }
 
+function get_users(mysqli $con):array{
+    $sql = "SELECT * FROM User";
+    return mysqli_fetch_all(mysqli_query($con, $sql), MYSQLI_ASSOC);
+}
 
-function pr ($val){
+function pr($val){
     $bt   = debug_backtrace();
     $file = file($bt[0]['file']);
     $src  = $file[$bt[0]['line']-1];
@@ -96,4 +100,22 @@ function pr ($val){
     $var  = preg_replace ($pat, '$2', $src);
     echo '<script>console.log("'.trim($var).'='. 
      addslashes(json_encode($val,JSON_UNESCAPED_UNICODE)) .'")</script>'."\n";
+}
+
+function add_user(string $email, string $name, string $password, string $contact_info, mysqli $con){
+    $temp_password = password_hash($password, PASSWORD_DEFAULT);
+    $sql = "INSERT INTO User(`Email`, `NameUser`, `PasswordUser`, `ContactInfo`)
+            VALUES(?,?,?,?);";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'ssss', $email, $name, $temp_password, $contact_info);
+    mysqli_stmt_execute($stmt);
+}
+
+function get_user(string $email, mysqli $con):array|null{
+    $sql = "SELECT * FROM User WHERE `Email` = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_assoc($res);
 }

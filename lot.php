@@ -17,7 +17,7 @@ if (http_response_code() === 404) {
 } else {
     $page_content = include_template('detail_lot.php', ['lot' => $lot, 'nav' => $nav]);
 }
-$layout = include_template('layout.php', ['title' => 'Главная', 'is_auth' => $is_auth,
+$layout = include_template('layout.php', ['title' => 'Лот', 'is_auth' => $is_auth,
     'user_name' => $user_name, 'nav' => $nav, 'contetnt' => $page_content]);
 
 print($layout);

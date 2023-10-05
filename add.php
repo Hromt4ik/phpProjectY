@@ -113,19 +113,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $addLot
         );
 
-        foreach ($required_fields as $field) {
-            [$field] = "";
-        }
-
-
-
         if (http_response_code() === 404) {
             $page_content = include_template('404.php', ['nav' => $nav]);
         } else {
             $page_content = header('Location: /lot.php?Id=' . $addLot);
         }
         $layout = include_template('layout.php', [
-            'title' => 'Главная',
+            'title' => 'Лот',
             'is_auth' => $is_auth,
             'user_name' => $user_name,
             'nav' => $nav,
@@ -137,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $page_content = include_template('add-lot.php', ['errors' => $errors, 'nav' => $nav, 'categories' => $categories]);
         $layout = include_template('layout.php', [
-            'title' => 'Главная',
+            'title' => 'Добавление',
             'is_auth' => $is_auth,
             'user_name' => $user_name,
             'nav' => $nav,
@@ -150,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 $page_content = include_template('add-lot.php', ['errors' => $errors, 'nav' => $nav, 'categories' => $categories]);
 $layout = include_template('layout.php', [
-    'title' => 'Главная',
+    'title' => 'Добавление',
     'is_auth' => $is_auth,
     'user_name' => $user_name,
     'nav' => $nav,

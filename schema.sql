@@ -11,7 +11,7 @@ create table User(
     DateRegistration timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     Email varchar(200) unique NOT NULL,
     NameUser varchar(75) NOT NULL,
-    PasswordUser varchar(100) NOT NULL,
+    PasswordUser varchar(300) NOT NULL,
     ContactInfo varchar(100) NOT NULL
 
 );
