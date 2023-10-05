@@ -7,22 +7,23 @@
             <div class="form__item <?php if (isset($errors['lot-name'])): ?> form__item--invalid <?php endif; ?>">
                 <!-- form__item--invalid -->
                 <label for="lot-name">Наименование <sup>*</sup></label>
-                <input id="lot-name" type="text" value="<?= getPostVal('lot-name'); ?>" name="lot-name"
-                    placeholder="Введите наименование лота">
+                <input id="lot-name" type="text" value="<?= getPostVal('lot-name'); ?>" name="lot-name" 
+                placeholder="Введите наименование лота">
                 <span class="form__error">
                     <?= $errors['lot-name'] ?>
                 </span>
             </div>
-            <div class="form__item">
+            <div class="form__item  <?php if (isset($errors['category'])): ?> form__item--invalid <?php endif; ?>">
                 <label for="category">Категория <sup>*</sup></label>
                 <select id="category" name="category">
+                <option hidden value=""></option>
                     <?php foreach ($categories as $item): ?>
-                        <option value="<?= $item['Id'] ?>">
+                        <option <?=$item['Id'] === getPostVal('category')? "selected" : "" ?> value="<?= $item['Id'] ?>">
                             <?= htmlspecialchars($item['NameCategory']) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <span class="form__error">Выберите категорию</span>
+                <span class="form__error"><?= $errors['category'] ?></span>
             </div>
         </div>
         <div
@@ -66,8 +67,8 @@
             </div>
             <div class="form__item <?php if (isset($errors['lot-date'])): ?> form__item--invalid <?php endif; ?>">
                 <label for="lot-date">Дата окончания торгов <sup>*</sup></label>
-                <input class="form__input-date" value="<?= getPostVal('lot-date'); ?>" id="lot-date" type="text"
-                    name="lot-date" placeholder="Введите дату в формате ГГГГ-ММ-ДД">
+                <input class="form__input-date" id="lot-date" type="text"
+                    name="lot-date" placeholder="Введите дату в формате ГГГГ-ММ-ДД" value="<?= getPostVal('lot-date');?>" >
                 <span class="form__error">
                     <?= $errors['lot-date'] ?>
                 </span>
