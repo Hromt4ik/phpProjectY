@@ -4,6 +4,9 @@ const MINUTES_IN_HOUR = 60;
 const SECOND_IN_MINUTE = 60;
 const HOUR_IN_DAY = 24;
 
+
+
+
 function format_price(int $num): string
 {
     return number_format($num, thousands_separator: " ") . " ₽";
@@ -82,4 +85,15 @@ function add_lot(
     mysqli_stmt_bind_param($stmt, 'sssisiii', $NameLot, $Detail, $Image, $StartPrise, $DateEnd, $StepBet, $AuthorId, $CategoryId);
     mysqli_stmt_execute($stmt);
     return $con->insert_id;
+}
+
+
+function pr ($val){
+    $bt   = debug_backtrace();
+    $file = file($bt[0]['file']);
+    $src  = $file[$bt[0]['line']-1];
+    $pat = '#(.*)'.__FUNCTION__.' *?\( *?(.*) *?\)(.*)#i';
+    $var  = preg_replace ($pat, '$2', $src);
+    echo '<script>console.log("'.trim($var).'='. 
+     addslashes(json_encode($val,JSON_UNESCAPED_UNICODE)) .'")</script>'."\n";
 }
