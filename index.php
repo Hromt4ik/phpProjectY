@@ -9,7 +9,6 @@ $categories = get_categories($con);
 $nav = include_template('categories.php', ['categories' => $categories]);
 
 $page_content = include_template('main.php', [ 'categories' => $categories, 'lots' => get_lots($con)]);
-$layout = include_template('layout.php',['title' => 'Главная','is_auth' => $is_auth,
-   'user_name' => $user_name, 'nav' => $nav, 'contetnt' => $page_content]);
+$layout = include_template('layout.php',['title' => 'Главная', 'nav' => $nav, 'contetnt' => $page_content]);
 
 print($layout);

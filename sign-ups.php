@@ -7,12 +7,22 @@ const MAX_NAME = 30;
 const MAX_EMAIL = 300;
 const MAX_CONTACT = 300;
 
-$user_list = get_users($con);
+
 $category_list = get_categories($con);
 $nav = include_template('categories.php',['categories' => $category_list]);
 
+if (isset($_SESSION['is_auth']) && $_SESSION['is_auth']) {
+    http_response_code(403);
+    $page_content = include_template('403.php', ['nav' => $nav]);
+    $layout = include_template('layout.php', [
+        'title' => 'Главная',
+        'nav' => $nav,
+        'contetnt' => $page_content
+    ]);
+    print($layout);
+} else {
 
-
+$user_list = get_users($con);
 $errors = [];
 $required_fields =['email','password','name','message'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {  
@@ -26,12 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if(!isset($errors['email'])){
         $user_email = [];
 
-            foreach($user_list as $user_item)
-            {
-                array_push($user_email, $user_item["Email"]);
-            }
-
-            if(in_array($_POST['email'], $user_email)){
+            if(in_array($_POST['email'], $user_list)){
                 $errors['email'] = 'Данный E-mail уже используеться!';
             };
     }
@@ -70,24 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $password = $_POST['password'];
         $message = $_POST['message'];
         add_user($email, $name, $password, $message, $con);
-        $detail_lot = header('Location: /sign-in.php');
-        print(include_template('layout.php', [
-            'is_auth' => $is_auth,
-            'user_name' => $user_name,
-            'title' => 'Вход',
-            'nav' => $nav,
-            'contetnt' => $detail_lot]));
+        header('Location: /sign-in.php');
     }
-}
-function getPostVal($name):string{
-    return $_POST[$name] ?? "";
 }
 
 $page_content = include_template('sign-up.php',['nav' => $nav, 'errors' => $errors]);
 $layout = print(include_template('layout.php', [
-    'is_auth' => $is_auth,
-    'user_name' => $user_name,
     'title' => 'Регистрация',
     'contetnt' => $page_content,
     'nav' => $nav
 ]));
+}

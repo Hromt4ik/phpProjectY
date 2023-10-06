@@ -75,10 +75,10 @@ function add_lot(
     int $StartPrise,
     string $DateEnd,
     int $StepBet,
+    int $AuthorId,
     int $CategoryId,
     mysqli $con
 ): int {
-    $AuthorId = 2;
     $sql = "INSERT INTO Lot( NameLot, Detail, Image, StartPrise, DateEnd, StepBet, AuthorId, CategoryId)
             VALUES ( ?,?,?,?,?,?,?,?)";
     $stmt = mysqli_prepare($con, $sql);
@@ -119,3 +119,10 @@ function get_user(string $email, mysqli $con):array|null{
     $res = mysqli_stmt_get_result($stmt);
     return mysqli_fetch_assoc($res);
 }
+
+function getPostVal($name): string
+{
+    return $_POST[$name] ?? "";
+}
+
+

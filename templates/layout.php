@@ -20,14 +20,17 @@
                 <input type="search" name="search" placeholder="Поиск лота">
                 <input class="main-header__search-btn" type="submit" name="find" value="Найти">
             </form>
+            <?php if (isset($_SESSION['is_auth']) && $_SESSION['is_auth']):?>
             <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
+            <?php endif; ?>
+            
 
             <nav class="user-menu">
-                <?php if (($is_auth) === 1): ?>
+                <?php if (isset($_SESSION['is_auth']) && $_SESSION['is_auth']): ?>
                     <div class="user-menu__logged">
-                        <p><?= htmlspecialchars($user_name) ?></p>
+                        <p><?= htmlspecialchars($_SESSION['username']) ?></p>
                         <a class="user-menu_bets" href="pages/my-bets.html">Мои ставки</a>
-                        <a class="user-menu__logout" href="#">Выход</a>
+                        <a class="user-menu__logout" href="logout.php">Выход</a>
                     </div>
                 <?php else: ?>
                     <ul class="user-menu__list">
@@ -93,7 +96,9 @@
                 </svg>
             </a>
         </div>
-        <a class="main-footer__add-lot button" href="add.php">Добавить лот</a>
+        <?php if (isset($_SESSION['is_auth']) && $_SESSION['is_auth']):?>
+            <a class="main-footer__add-lot button" href="add.php">Добавить лот</a>
+        <?php endif; ?>
         <div class="main-footer__developed-by">
             <span class="visually-hidden">Разработано:</span>
             <a class="logo-academy" href="https://htmlacademy.ru/intensive/php">

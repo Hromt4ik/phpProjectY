@@ -12,6 +12,9 @@
                     <p class="lot-item__description"><?= $lot['Detail']?></p>
                 </div>
                 <div class="lot-item__right">
+                    
+
+                <?php if (isset($_SESSION['is_auth']) && $_SESSION['is_auth']):?>
                     <div class="lot-item__state">
                     <?php $time_end = get_dt_range($lot['DateEnd']) ?>
                         
@@ -36,6 +39,7 @@
                             <button type="submit" class="button">Сделать ставку</button>
                         </form>
                     </div>
+                    <?php endif ?>
                     <div class="history">
                         <h3>История ставок (<span>10</span>)</h3>
                         <table class="history__list">
