@@ -9,14 +9,14 @@ if(!empty($_GET)){
     $search_str = isset($_GET['search']) ? $_GET['search'] : "";
     $count_lot = search_lot_count($searchs, $con);
 
-        $limit = 6;
-        $temp_pages = ceil($count_lot/$limit);
+        $limit = 3;
+        $count_page = ceil($count_lot/$limit);
         $curr_page =  isset($_GET['page']) ? $_GET['page'] : 1;
         if($curr_page <= 0){
             $curr_page = 1;
         }
-        if($curr_page >= $temp_pages){
-            $curr_page = $temp_pages;
+        if($curr_page >= $count_page){
+            $curr_page = $count_page;
         }
         $offset = ($curr_page - 1) * $limit;
     if($count_lot){
@@ -33,7 +33,7 @@ $main = include_template('search.php', [
     'nav' => $nav,
     'lots' => $search_lot,
     'search_str' => $search_str,
-    'count_page' => $temp_pages,
+    'count_page' => $count_page,
     'curr_page' => $curr_page
 ]);
 
