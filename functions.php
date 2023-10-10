@@ -126,3 +126,33 @@ function getPostVal($name): string
 }
 
 
+function search_lot_count(string $search_str, mysqli $con): int{
+    $sql = "SELECT Lot.Id,`NameLot`, `StartPrise`, `Image`, Category.NameCategory, `DateEnd`, Detail 
+FROM `Lot` 
+    INNER JOIN Category ON Lot.CategoryId = Category.Id WHERE `DateEnd` >= CURRENT_DATE 
+AND MATCH(`NameLot`,Lot.Detail) AGAINST(?) ORDER BY `DateCreate` DESC;";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $search_str);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_num_rows($result);
+}
+
+function search_lot(string $search_str, mysqli $con, int $limit, int $offset): array|null
+{
+    $sql = "SELECT Lot.Id,`NameLot`, `StartPrise`, `Image`, Category.NameCategory, `DateEnd`, Detail 
+FROM `Lot` 
+    INNER JOIN Category ON Lot.CategoryId = Category.Id WHERE `DateEnd` >= CURRENT_DATE 
+AND MATCH(`NameLot`,Lot.Detail) AGAINST(?) ORDER BY `DateCreate` DESC
+    LIMIT ?
+    OFFSET ?;";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'sii', $search_str, $limit, $offset);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    if ($res) {
+        return mysqli_fetch_all($res, MYSQLI_ASSOC);
+    } else {
+        return null;
+    }
+}
