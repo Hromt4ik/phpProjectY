@@ -2,6 +2,9 @@
 require_once ('helpers.php');
 require_once ('functions.php');
 require_once ('init.php');
+
+const LIMIT_ON_PAGE = 3;
+
 $categories = get_categories($con);
 $nav = include_template('categories.php', ['categories' => $categories]);
 if(!empty($_GET)){
@@ -9,19 +12,11 @@ if(!empty($_GET)){
     $search_str = isset($_GET['search']) ? $_GET['search'] : "";
     $count_lot = search_lot_count($searchs, $con);
 
-        $limit = 3;
-        $count_page = ceil($count_lot/$limit);
+        $count_page = ceil($count_lot/LIMIT_ON_PAGE);
         $curr_page =  isset($_GET['page']) ? $_GET['page'] : 1;
-        if($curr_page <= 0){
-            $curr_page = 1;
-        }
-        if($curr_page >= $count_page){
-            $curr_page = $count_page;
-        }
-        $offset = ($curr_page - 1) * $limit;
+        $offset = ($curr_page - 1) * LIMIT_ON_PAGE;
     if($count_lot){
-        $search_lot = search_lot($searchs, $con, $limit, $offset);
-
+        $search_lot = search_lot($searchs, $con, LIMIT_ON_PAGE, $offset);
     }else{
         $search_lot = null;
     }

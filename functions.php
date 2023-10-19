@@ -4,15 +4,23 @@ const MINUTES_IN_HOUR = 60;
 const SECOND_IN_MINUTE = 60;
 const HOUR_IN_DAY = 24;
 
-
-
-
+/**
+* Форматирует Цену
+* @param int $num Неформатированая цена
+* 
+* @return string форматированная цена
+*/
 function format_price(int $num): string
 {
     return number_format($num, thousands_separator: " ") . " ₽";
 }
 
-
+/**
+* Возварщает время оставшееся до завершения лота
+* @param string $date дата завершения лота 
+* 
+* @return array [часы, минуты]
+*/
 function get_dt_range(string $date): array
 {
     date_default_timezone_set("Asia/Yekaterinburg");
@@ -23,12 +31,24 @@ function get_dt_range(string $date): array
     return [str_pad($hours, 2, "0", STR_PAD_LEFT), str_pad($minutes + 1, 2, "0", STR_PAD_LEFT)];
 }
 
+/**
+* Получает список всех категорий
+* @param mysqli $con подключение к базе
+* 
+* @return array список категорий
+*/
 function get_categories(mysqli $con): array
 {
     $sql = "SELECT * FROM `Category`";
     return mysqli_fetch_all(mysqli_query($con, $sql), MYSQLI_ASSOC);
 }
 
+/**
+* Получает список всех лотов в порядке создания от последнего к первому
+* @param mysqli $con подключение к базе
+*
+* @return array список лотов
+*/
 function get_lots(mysqli $con): array
 {
     $sql = "SELECT Lot.Id,`NameLot`, `StartPrise`, `Image`, Category.NameCategory, `DateEnd`
@@ -41,7 +61,13 @@ function get_lots(mysqli $con): array
     return mysqli_fetch_all(mysqli_query($con, $sql), MYSQLI_ASSOC);
 }
 
-
+/**
+* Возвращает Лот по Id или null если лот не найден 
+* @param mysqli $con подключение к базе
+* @param int $lot_id Id лота
+*
+* @return array лот 
+*/
 function get_lot_by_id(mysqli $con, int $lot_id): array|null
 {
     $sql = "SELECT 
@@ -68,6 +94,20 @@ WHERE Lot.Id = ?";
     return $rows;
 }
 
+/**
+* Добовляет лот
+* @param string $NameLot имя лота
+* @param string $Detail описание лота
+* @param string $Image изображение лота
+* @param int $StartPrise начальная цена
+* @param string $DateEnd дата завершения
+* @param int $StepBet шаг ставки
+* @param int $AuthorId Id автора
+* @param int $CategoryId Id категории 
+* @param mysqli $con подключение к базе
+*
+* @return int Id лота
+*/
 function add_lot(
     string $NameLot,
     string $Detail,
@@ -87,22 +127,38 @@ function add_lot(
     return $con->insert_id;
 }
 
+/**
+* Возвращает список пользователей
+* @param mysqli $con подключение к базе
+*
+* @return array список пользователей 
+*/
 function get_users(mysqli $con):array{
     $sql = "SELECT * FROM User";
     return mysqli_fetch_all(mysqli_query($con, $sql), MYSQLI_ASSOC);
 }
 
-function pr($val){
-    $bt   = debug_backtrace();
-    $file = file($bt[0]['file']);
-    $src  = $file[$bt[0]['line']-1];
-    $pat = '#(.*)'.__FUNCTION__.' *?\( *?(.*) *?\)(.*)#i';
-    $var  = preg_replace ($pat, '$2', $src);
-    echo '<script>console.log("'.trim($var).'='. 
-     addslashes(json_encode($val,JSON_UNESCAPED_UNICODE)) .'")</script>'."\n";
-}
 
-function add_user(string $email, string $name, string $password, string $contact_info, mysqli $con){
+// function pr($val){
+//     $bt   = debug_backtrace();
+//     $file = file($bt[0]['file']);
+//     $src  = $file[$bt[0]['line']-1];
+//     $pat = '#(.*)'.__FUNCTION__.' *?\( *?(.*) *?\)(.*)#i';
+//     $var  = preg_replace ($pat, '$2', $src);
+//     echo '<script>console.log("'.trim($var).'='. 
+//      addslashes(json_encode($val,JSON_UNESCAPED_UNICODE)) .'")</script>'."\n";
+// }
+
+
+/**
+* Добовляет пользователя
+* @param string $email Email пользователя
+* @param string $name имя пользователя
+* @param string $password пароль пользователя
+* @param int $contact_info контактная информация
+* @param mysqli $con подключение к базе
+*/
+function add_user(string $email, string $name, string $password, string $contact_info, mysqli $con): void{
     $temp_password = password_hash($password, PASSWORD_DEFAULT);
     $sql = "INSERT INTO User(`Email`, `NameUser`, `PasswordUser`, `ContactInfo`)
             VALUES(?,?,?,?);";
@@ -111,6 +167,14 @@ function add_user(string $email, string $name, string $password, string $contact
     mysqli_stmt_execute($stmt);
 }
 
+
+/**
+* Возвращает пользователя
+* @param mysqli $con подключение к базе
+* @param string $email Email пользователя
+*
+* @return array пользователь
+*/
 function get_user(string $email, mysqli $con):array|null{
     $sql = "SELECT * FROM User WHERE `Email` = ?";
     $stmt = mysqli_prepare($con, $sql);
@@ -120,6 +184,14 @@ function get_user(string $email, mysqli $con):array|null{
     return mysqli_fetch_assoc($res);
 }
 
+
+
+/**
+* Сохраняет заначение поля при POST запросе
+* @param string $name имя поля
+* 
+* @return string значение поля
+*/
 function getPostVal($name): string
 {
     return $_POST[$name] ?? "";
@@ -127,8 +199,7 @@ function getPostVal($name): string
 
 
 function search_lot_count(string $search_str, mysqli $con): int{
-    $sql = "SELECT Lot.Id,`NameLot`, `StartPrise`, `Image`, Category.NameCategory, `DateEnd`, Detail 
-FROM `Lot` 
+    $sql = "SELECT `Lot`.`Id` FROM `Lot` 
     INNER JOIN Category ON Lot.CategoryId = Category.Id WHERE `DateEnd` >= CURRENT_DATE 
 AND MATCH(`NameLot`,Lot.Detail) AGAINST(?) ORDER BY `DateCreate` DESC;";
     $stmt = mysqli_prepare($con, $sql);
