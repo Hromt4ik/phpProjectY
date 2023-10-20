@@ -6,8 +6,10 @@
         <ul class="promo__list">
             <!--заполните этот список из массива категорий-->
             <?php foreach ($categories as $item): ?>
-                <li class="promo__item promo__item--<?=($item['SymbolCode'])?>">
-                    <a class="promo__link" href="pages/all-lots.html"><?= htmlspecialchars($item['NameCategory']) ?></a>
+                <li class="promo__item promo__item--<?= ($item['SymbolCode']) ?>">
+                    <a class="promo__link" href="pages/all-lots.html">
+                        <?= htmlspecialchars($item['NameCategory']) ?>
+                    </a>
                 </li>
             <?php endforeach; ?>
 
@@ -26,16 +28,22 @@
                         <img src="<?= htmlspecialchars($item['Image']) ?>" width="350" height="260" alt="">
                     </div>
                     <div class="lot__info">
-                        <span class="lot__category"><?= htmlspecialchars($item['NameCategory']) ?></span>
-                        <h3 class="lot__title"><a class="text-link" href="lot.php?Id=<?=$item['Id']?>"><?= htmlspecialchars($item['NameLot']) ?></a></h3>
+                        <span class="lot__category">
+                            <?= htmlspecialchars($item['NameCategory']) ?>
+                        </span>
+                        <h3 class="lot__title"><a class="text-link" href="lot.php?Id=<?= $item['Id'] ?>">
+                                <?= htmlspecialchars($item['NameLot']) ?>
+                            </a></h3>
                         <div class="lot__state">
                             <div class="lot__rate">
                                 <span class="lot__amount">Стартовая цена</span>
-                                <span class="lot__cost"><?= format_price($item['StartPrise']) ?></span>
+                                <span class="lot__cost">
+                                    <?= format_price($item['StartPrise']) ?>
+                                </span>
                             </div>
                             <?php $time_end = get_dt_range($item['DateEnd']) ?>
-                            <div class="lot__timer <?php if($time_end[0] < "24"):?>timer--finishing<?php endif?> timer ">
-                                <?= "$time_end[0]:$time_end[1]"?>
+                            <div class="lot__timer <?php if ($time_end[0] < "24"): ?>timer--finishing<?php endif ?> timer ">
+                                <?= "$time_end[0]:$time_end[1]" ?>
                             </div>
                         </div>
                     </div>

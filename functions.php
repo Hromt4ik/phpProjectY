@@ -5,22 +5,22 @@ const SECOND_IN_MINUTE = 60;
 const HOUR_IN_DAY = 24;
 
 /**
-* Форматирует Цену
-* @param int $num Неформатированая цена
-* 
-* @return string форматированная цена
-*/
+ * Форматирует Цену
+ * @param int $num Неформатированая цена
+ * 
+ * @return string форматированная цена
+ */
 function format_price(int $num): string
 {
     return number_format($num, thousands_separator: " ") . " ₽";
 }
 
 /**
-* Возварщает время оставшееся до завершения лота
-* @param string $date дата завершения лота 
-* 
-* @return array [часы, минуты]
-*/
+ * Возварщает время оставшееся до завершения лота
+ * @param string $date дата завершения лота 
+ * 
+ * @return array [часы, минуты]
+ */
 function get_dt_range(string $date): array
 {
     date_default_timezone_set("Asia/Yekaterinburg");
@@ -32,11 +32,11 @@ function get_dt_range(string $date): array
 }
 
 /**
-* Получает список всех категорий
-* @param mysqli $con подключение к базе
-* 
-* @return array список категорий
-*/
+ * Получает список всех категорий
+ * @param mysqli $con подключение к базе
+ * 
+ * @return array список категорий
+ */
 function get_categories(mysqli $con): array
 {
     $sql = "SELECT * FROM `Category`";
@@ -44,11 +44,11 @@ function get_categories(mysqli $con): array
 }
 
 /**
-* Получает список всех лотов в порядке создания от последнего к первому
-* @param mysqli $con подключение к базе
-*
-* @return array список лотов
-*/
+ * Получает список всех лотов в порядке создания от последнего к первому
+ * @param mysqli $con подключение к базе
+ *
+ * @return array список лотов
+ */
 function get_lots(mysqli $con): array
 {
     $sql = "SELECT Lot.Id,`NameLot`, `StartPrise`, `Image`, Category.NameCategory, `DateEnd`
@@ -62,12 +62,12 @@ function get_lots(mysqli $con): array
 }
 
 /**
-* Возвращает Лот по Id или null если лот не найден 
-* @param mysqli $con подключение к базе
-* @param int $lot_id Id лота
-*
-* @return array лот 
-*/
+ * Возвращает Лот по Id или null если лот не найден 
+ * @param mysqli $con подключение к базе
+ * @param int $lot_id Id лота
+ *
+ * @return array лот 
+ */
 function get_lot_by_id(mysqli $con, int $lot_id): array|null
 {
     $sql = "SELECT 
@@ -95,19 +95,19 @@ WHERE Lot.Id = ?";
 }
 
 /**
-* Добовляет лот
-* @param string $NameLot имя лота
-* @param string $Detail описание лота
-* @param string $Image изображение лота
-* @param int $StartPrise начальная цена
-* @param string $DateEnd дата завершения
-* @param int $StepBet шаг ставки
-* @param int $AuthorId Id автора
-* @param int $CategoryId Id категории 
-* @param mysqli $con подключение к базе
-*
-* @return int Id лота
-*/
+ * Добовляет лот
+ * @param string $NameLot имя лота
+ * @param string $Detail описание лота
+ * @param string $Image изображение лота
+ * @param int $StartPrise начальная цена
+ * @param string $DateEnd дата завершения
+ * @param int $StepBet шаг ставки
+ * @param int $AuthorId Id автора
+ * @param int $CategoryId Id категории 
+ * @param mysqli $con подключение к базе
+ *
+ * @return int Id лота
+ */
 function add_lot(
     string $NameLot,
     string $Detail,
@@ -128,12 +128,13 @@ function add_lot(
 }
 
 /**
-* Возвращает список пользователей
-* @param mysqli $con подключение к базе
-*
-* @return array список пользователей 
-*/
-function get_users(mysqli $con):array{
+ * Возвращает список пользователей
+ * @param mysqli $con подключение к базе
+ *
+ * @return array список пользователей 
+ */
+function get_users(mysqli $con): array
+{
     $sql = "SELECT * FROM User";
     return mysqli_fetch_all(mysqli_query($con, $sql), MYSQLI_ASSOC);
 }
@@ -151,14 +152,15 @@ function get_users(mysqli $con):array{
 
 
 /**
-* Добовляет пользователя
-* @param string $email Email пользователя
-* @param string $name имя пользователя
-* @param string $password пароль пользователя
-* @param int $contact_info контактная информация
-* @param mysqli $con подключение к базе
-*/
-function add_user(string $email, string $name, string $password, string $contact_info, mysqli $con): void{
+ * Добовляет пользователя
+ * @param string $email Email пользователя
+ * @param string $name имя пользователя
+ * @param string $password пароль пользователя
+ * @param int $contact_info контактная информация
+ * @param mysqli $con подключение к базе
+ */
+function add_user(string $email, string $name, string $password, string $contact_info, mysqli $con): void
+{
     $temp_password = password_hash($password, PASSWORD_DEFAULT);
     $sql = "INSERT INTO User(`Email`, `NameUser`, `PasswordUser`, `ContactInfo`)
             VALUES(?,?,?,?);";
@@ -169,13 +171,14 @@ function add_user(string $email, string $name, string $password, string $contact
 
 
 /**
-* Возвращает пользователя
-* @param mysqli $con подключение к базе
-* @param string $email Email пользователя
-*
-* @return array пользователь
-*/
-function get_user(string $email, mysqli $con):array|null{
+ * Возвращает пользователя
+ * @param mysqli $con подключение к базе
+ * @param string $email Email пользователя
+ *
+ * @return array пользователь
+ */
+function get_user(string $email, mysqli $con): array|null
+{
     $sql = "SELECT * FROM User WHERE `Email` = ?";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 's', $email);
@@ -187,21 +190,22 @@ function get_user(string $email, mysqli $con):array|null{
 
 
 /**
-* Сохраняет заначение поля при POST запросе
-* @param string $name имя поля
-* 
-* @return string значение поля
-*/
+ * Сохраняет заначение поля при POST запросе
+ * @param string $name имя поля
+ * 
+ * @return string значение поля
+ */
 function getPostVal($name): string
 {
     return $_POST[$name] ?? "";
 }
 
 
-function search_lot_count(string $search_str, mysqli $con): int{
+function search_lot_count(string $search_str, mysqli $con): int
+{
     $sql = "SELECT `Lot`.`Id` FROM `Lot` 
     INNER JOIN Category ON Lot.CategoryId = Category.Id WHERE `DateEnd` >= CURRENT_DATE 
-AND MATCH(`NameLot`,Lot.Detail) AGAINST(?) ORDER BY `DateCreate` DESC;";
+    AND MATCH(`NameLot`,Lot.Detail) AGAINST(?) ORDER BY `DateCreate` DESC;";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 's', $search_str);
     mysqli_stmt_execute($stmt);

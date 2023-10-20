@@ -6,10 +6,6 @@ require_once('init.php');
 const MAX_NAME_LENGHT = 75;
 const MAX_DETAIL_LENGHT = 500;
 
-// if($_SERVER['REQUEST_METHOD'] == 'POST')
-
-
-
 $categories = get_categories($con);
 $nav = include_template('categories.php', ['categories' => $categories]);
 
@@ -23,8 +19,6 @@ if (!(isset($_SESSION['is_auth']) && $_SESSION['is_auth'])) {
     ]);
     print($layout);
 } else {
-
-
 
     $errors = [];
     $required_fields = ['lot-name', 'category', 'message', 'lot-rate', 'lot-step', 'lot-date'];
@@ -125,12 +119,13 @@ if (!(isset($_SESSION['is_auth']) && $_SESSION['is_auth'])) {
                 $layout = include_template('layout.php', [
                     'title' => 'Лот',
                     'nav' => $nav,
-                    'contetnt' => $page_content]);
-                    print($layout);
+                    'contetnt' => $page_content
+                ]);
+                print($layout);
             } else {
                 header('Location: /lot.php?Id=' . $addLot);
             }
-            
+
         } else {
             $page_content = include_template('add-lot.php', ['errors' => $errors, 'nav' => $nav, 'categories' => $categories]);
             $layout = include_template('layout.php', [

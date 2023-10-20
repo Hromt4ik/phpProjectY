@@ -3,11 +3,8 @@ require_once('functions.php');
 require_once('helpers.php');
 require_once('init.php');
 
-
 $categories = get_categories($con);
 $nav = include_template('categories.php', ['categories' => $categories]);
-
-
 
 $Id = $_GET['Id'] ?? -1;
 $lot = get_lot_by_id($con, $Id);
