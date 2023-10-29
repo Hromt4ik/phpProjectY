@@ -35,7 +35,7 @@
                             <p>
                                 <?= htmlspecialchars($_SESSION['username']) ?>
                             </p>
-                            <a class="user-menu_bets" href="mbest.php">Мои ставки</a>
+                            <a class="user-menu_bets" href="viewBetUser.php">Мои ставки</a>
                             <a class="user-menu__logout" href="logout.php">Выход</a>
                         </div>
                     <?php else: ?>

@@ -2,8 +2,8 @@
 session_start();
 
 const HOST = 'localhost';
-const LOGIN = 'srkcersj';
-const PASSWORD = 'cempkV';
+const LOGIN = 'root';
+const PASSWORD = '';
 const DB_NAME = 'srkcersj_m3';
 
 $con = mysqli_connect(HOST, LOGIN, PASSWORD, DB_NAME);

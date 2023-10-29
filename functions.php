@@ -231,3 +231,120 @@ AND MATCH(`NameLot`,Lot.Detail) AGAINST(?) ORDER BY `DateCreate` DESC
         return null;
     }
 }
+
+function lot_list_cat(int $id_cat, mysqli $con, int $limit, int $offset): array
+{
+    $sql = "SELECT Lot.Id,  Lot.NameLot as name_lot, `Image`, StartPrise, DateEnd, Category.NameCategory as cat_name, CategoryId FROM Lot
+    INNER JOIN Category ON Lot.CategoryId = Category.id
+    WHERE DateEnd >= CURRENT_DATE && CategoryId = ?  ORDER BY DateEnd DESC 
+    LIMIT ?
+    OFFSET ?;";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'iii', $id_cat, $limit, $offset);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    
+    if (mysqli_num_rows($res) === 0) {
+        http_response_code(404);
+    }
+   
+    return mysqli_fetch_all($res, MYSQLI_ASSOC);
+}
+
+
+
+
+function cat_lot_count(int $id_cat, mysqli $con): int
+{
+    $sql = "SELECT COUNT(Lot.id) AS count_lot FROM Lot
+    INNER JOIN Category ON Lot.CategoryId = Category.id
+    WHERE DateEnd >= CURRENT_DATE && CategoryId = ?  ORDER BY DateEnd DESC ";
+    $stmt = mysqli_prepare($con, $sql);
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $id_cat);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $result = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    
+    return (int) $result[0]['count_lot'];
+}
+
+function bets_lot(int $id_lot, mysqli $con): array
+{
+    $sql = "SELECT Bet.Id, User.NameUser as user_name, Sum, Bet.DateCreate, LotId, UserId FROM Bet
+    INNER JOIN User ON User.id = UserId
+    WHERE LotId = ? ORDER BY Bet.DateCreate DESC;";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $id_lot);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    
+    return mysqli_fetch_all($res, MYSQLI_ASSOC);
+}
+
+//исправить вывод дат
+function formate_date(string $date): string
+{
+    date_default_timezone_set('Asia/Yekaterinburg');
+    $diff = time() - strtotime($date);
+
+    $day = floor($diff / (SECOND_IN_MINUTE * MINUTES_IN_HOUR * HOUR_IN_DAY));
+    $hour = floor($diff / (SECOND_IN_MINUTE * MINUTES_IN_HOUR));
+    $minute = floor($diff / SECOND_IN_MINUTE);
+
+    $sec = $diff;
+
+    if ($day >= 1) {
+        return $day . ' ' . get_noun_plural_form($day, 'день', 'дня', 'дней') . ' назад';
+    }
+    if ($hour >= 1) {
+        return $hour . ' ' . get_noun_plural_form($hour, 'час', 'часа', 'часов') . ' назад';
+    }
+    if ($minute >= 1) {
+        return $minute . ' ' . get_noun_plural_form($minute, 'минуту', 'минуты', 'минут') . ' назад';
+    } else {
+        return $sec . ' ' . get_noun_plural_form($sec, 'секунду', 'секунды', 'секунд') . ' назад';
+    }
+
+
+
+}
+
+function bets_my(int $id_user, mysqli $con): array
+{
+    $sql = "SELECT Bet.Id, User.NameUser as user_name, Lot.DateEnd as lot_date, Lot.Image as pic_lot, Sum, Bet.DateCreate, LotId, UserId, Lot.NameLot as lot_name, 
+    Category.NameCategory as category_name FROM Bet
+    INNER JOIN User ON User.Id = UserId
+    INNER JOIN Lot ON Lot.Id = LotId
+    INNER JOIN Category ON Category.id = CategoryId
+    WHERE UserId = ? ORDER BY Bet.DateCreate DESC;";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $id_user);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_all($res, MYSQLI_ASSOC);
+}
+
+function bets_win(int $id_lot, mysqli $con): array
+{
+    $sql = "SELECT Bet.Id, User.NameUser as user_name, Sum, Bet.DateCreate, LotId, UserId FROM Bet
+    INNER JOIN User ON User.id = UserId
+    WHERE LotId = ? ORDER BY Bet.DateCreate DESC;";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $id_lot);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $rows = mysqli_fetch_assoc($res);
+    return $rows;
+}
+
+function bet_add(int $lot_id, int $user_id, int $cost, mysqli $con): void
+{
+    $sql = "INSERT INTO Bet(`Sum`, LotId, UserId)
+            VALUES(?,?,?);";
+    $stmt = mysqli_prepare($con, $sql);
+
+    mysqli_stmt_bind_param($stmt, 'iii', $cost, $lot_id, $user_id);
+
+    mysqli_stmt_execute($stmt);
+}
