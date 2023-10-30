@@ -44,7 +44,7 @@ function get_categories(mysqli $con): array
 }
 
 /**
- * Получает список всех лотов в порядке создания от последнего к первому
+ * Получает список всех не истекших лотов лотов в порядке создания от последнего к первому
  * @param mysqli $con подключение к базе
  *
  * @return array список лотов
@@ -140,16 +140,6 @@ function get_users(mysqli $con): array
 }
 
 
-// function pr($val){
-//     $bt   = debug_backtrace();
-//     $file = file($bt[0]['file']);
-//     $src  = $file[$bt[0]['line']-1];
-//     $pat = '#(.*)'.__FUNCTION__.' *?\( *?(.*) *?\)(.*)#i';
-//     $var  = preg_replace ($pat, '$2', $src);
-//     echo '<script>console.log("'.trim($var).'='. 
-//      addslashes(json_encode($val,JSON_UNESCAPED_UNICODE)) .'")</script>'."\n";
-// }
-
 
 /**
  * Добовляет пользователя
@@ -171,7 +161,7 @@ function add_user(string $email, string $name, string $password, string $contact
 
 
 /**
- * Возвращает пользователя
+ * Возвращает пользователя, null если пользователь не найден
  * @param mysqli $con подключение к базе
  * @param string $email Email пользователя
  *
@@ -201,6 +191,12 @@ function getPostVal($name): string
 }
 
 
+/**
+ * Возвращает количетво найденых лотов соответствующих строке поиска
+ * @param string $search_str строка поиска
+ * 
+ * @return int количетво лотов
+ */
 function search_lot_count(string $search_str, mysqli $con): int
 {
     $sql = "SELECT `Lot`.`Id` FROM `Lot` 
@@ -213,6 +209,17 @@ function search_lot_count(string $search_str, mysqli $con): int
     return mysqli_num_rows($result);
 }
 
+
+/**
+ * Возвращает Лоты по названию или категории если лоты не найден возвращает null
+ * @param mysqli $con подключение к базе
+ * @param string $search_str стрка поиска
+ * @param int $limit количетсво возвращаемых записей
+ * @param int $offset позиция с которой начинается выборка
+ * 
+ *
+ * @return array лоты подходяшие под условия поиска
+ */
 function search_lot(string $search_str, mysqli $con, int $limit, int $offset): array|null
 {
     $sql = "SELECT Lot.Id,`NameLot`, `StartPrise`, `Image`, Category.NameCategory, `DateEnd`, Detail 
@@ -232,7 +239,17 @@ AND MATCH(`NameLot`,Lot.Detail) AGAINST(?) ORDER BY `DateCreate` DESC
     }
 }
 
-function lot_list_cat(int $id_cat, mysqli $con, int $limit, int $offset): array
+/**
+ * Возвращает Лоты по категории если лоты не найден возвращает null
+ * @param mysqli $con подключение к базе
+ * @param int $id_cat Id категории
+ * @param int $limit количетсво возвращаемых записей
+ * @param int $offset позиция с которой начинается выборка
+ * 
+ *
+ * @return array лоты подходящей категории
+ */
+function lot_list_cat(int $id_cat, mysqli $con, int $limit, int $offset): array|null
 {
     $sql = "SELECT Lot.Id,  Lot.NameLot as name_lot, `Image`, StartPrise, DateEnd, Category.NameCategory as cat_name, CategoryId FROM Lot
     INNER JOIN Category ON Lot.CategoryId = Category.id
@@ -243,17 +260,23 @@ function lot_list_cat(int $id_cat, mysqli $con, int $limit, int $offset): array
     mysqli_stmt_bind_param($stmt, 'iii', $id_cat, $limit, $offset);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
-    
+
     if (mysqli_num_rows($res) === 0) {
         http_response_code(404);
     }
-   
+
     return mysqli_fetch_all($res, MYSQLI_ASSOC);
 }
 
 
 
-
+/**
+ * Возвращает количетво лотов в категории
+ * @param mysqli $con подключение к базе
+ * @param int $id_cat Id категории 
+ *
+ * @return int количество лотов в категории
+ */
 function cat_lot_count(int $id_cat, mysqli $con): int
 {
     $sql = "SELECT COUNT(Lot.id) AS count_lot FROM Lot
@@ -265,11 +288,18 @@ function cat_lot_count(int $id_cat, mysqli $con): int
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     $result = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    
-    return (int) $result[0]['count_lot'];
+
+    return $result[0]['count_lot'];
 }
 
-function bets_lot(int $id_lot, mysqli $con): array
+/**
+ * Возвращает ставки для лота или null если нетс ставок на этот лот
+ * @param mysqli $con подключение к базе
+ * @param int $id_lot Id лота 
+ *
+ * @return array ставки на лот 
+ */
+function bets_lot(int $id_lot, mysqli $con): array|null
 {
     $sql = "SELECT Bet.Id, User.NameUser as user_name, Sum, Bet.DateCreate, LotId, UserId FROM Bet
     INNER JOIN User ON User.id = UserId
@@ -278,11 +308,16 @@ function bets_lot(int $id_lot, mysqli $con): array
     mysqli_stmt_bind_param($stmt, 'i', $id_lot);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
-    
+
     return mysqli_fetch_all($res, MYSQLI_ASSOC);
 }
 
-//исправить вывод дат
+/**
+ * Возвращает ставки для лота или null если нетс ставок на этот лот
+ * @param string $date дата и время ставки
+ *
+ * @return string время прошедшее с мосента ставки в нужном формате 
+ */
 function formate_date(string $date): string
 {
     date_default_timezone_set('Asia/Yekaterinburg');
@@ -302,15 +337,19 @@ function formate_date(string $date): string
     }
     if ($minute >= 1) {
         return $minute . ' ' . get_noun_plural_form($minute, 'минуту', 'минуты', 'минут') . ' назад';
-    } else {
-        return $sec . ' ' . get_noun_plural_form($sec, 'секунду', 'секунды', 'секунд') . ' назад';
-    }
-
-
-
+    } 
+    return $sec . ' ' . get_noun_plural_form($sec, 'секунду', 'секунды', 'секунд') . ' назад';
+    
 }
 
-function bets_my(int $id_user, mysqli $con): array
+/**
+ * Возвращает ставки пользователя  
+ * @param mysqli $con подключение к базе
+ * @param int $id_user Id пользователя 
+ *
+ * @return array список ставок на лот пользователя 
+ */
+function bets_my(int $id_user, mysqli $con): array|null
 {
     $sql = "SELECT Bet.Id, User.NameUser as user_name, Lot.DateEnd as lot_date, Lot.Image as pic_lot, Sum, Bet.DateCreate, LotId, UserId, Lot.NameLot as lot_name, 
     Category.NameCategory as category_name FROM Bet
@@ -325,11 +364,20 @@ function bets_my(int $id_user, mysqli $con): array
     return mysqli_fetch_all($res, MYSQLI_ASSOC);
 }
 
-function bets_win(int $id_lot, mysqli $con): array
+/**
+ * Возвращает победную ставку лота 
+ * @param mysqli $con подключение к базе
+ * @param int $id_lot Id лота 
+ *
+ * @return array ставка
+ */
+function bets_win(int $id_lot, mysqli $con): array|null
 {
-    $sql = "SELECT Bet.Id, User.NameUser as user_name, Sum, Bet.DateCreate, LotId, UserId FROM Bet
-    INNER JOIN User ON User.id = UserId
-    WHERE LotId = ? ORDER BY Bet.DateCreate DESC;";
+    $sql = "SELECT Bet.Id, winer.NameUser as user_name, Author.ContactInfo as contact_user, Sum, Bet.DateCreate, LotId, UserId FROM Bet 
+    INNER JOIN User As winer ON winer.Id = UserId 
+    INNER JOIN Lot ON Bet.LotId = Lot.Id
+    INNER JOIN User as Author on Author.Id = Lot.AuthorId
+    WHERE LotId = ? ORDER BY Bet.DateCreate DESC";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 'i', $id_lot);
     mysqli_stmt_execute($stmt);
@@ -338,7 +386,14 @@ function bets_win(int $id_lot, mysqli $con): array
     return $rows;
 }
 
-function bet_add(int $lot_id, int $user_id, int $cost, mysqli $con): void
+/**
+ * Добавляет ставку
+ * @param mysqli $con подключение к базе
+ * @param int $lot_id Id лота 
+ * @param int $user_id Id пользователя 
+ * @param int $cost сумма ставки
+ */
+function add_bet(int $lot_id, int $user_id, int $cost, mysqli $con): void
 {
     $sql = "INSERT INTO Bet(`Sum`, LotId, UserId)
             VALUES(?,?,?);";
@@ -347,4 +402,84 @@ function bet_add(int $lot_id, int $user_id, int $cost, mysqli $con): void
     mysqli_stmt_bind_param($stmt, 'iii', $cost, $lot_id, $user_id);
 
     mysqli_stmt_execute($stmt);
+}
+
+/**
+ * Добавляет победителя лоту
+ * @param mysqli $con подключение к базе
+ * @param int $lot_id Id лота 
+ * @param int $bet_id Id ставки 
+ */
+function add_winer(int $lot_id, int $bet_id, mysqli $con): void
+{
+    $sql = 'UPDATE `Lot` SET `WinerId`= ? WHERE Id = ?';
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'ii', $bet_id, $lot_id);
+    mysqli_stmt_execute($stmt);
+
+}
+
+/**
+ * Возвращает все лоты
+ * @param mysqli $con подключение к базе
+ *
+ * @return array список лотов
+ */
+function get_all_lots(mysqli $con): array
+{
+    $sql = "SELECT Lot.Id, Lot.NameLot as name_lot, `Image`, StartPrise, DateEnd, Category.NameCategory as cat_name, WinerId FROM Lot
+INNER JOIN Category ON Lot.CategoryId = Category.Id
+WHERE DateEnd < CURRENT_DATE() AND WinerId IS NUll 
+ORDER BY DateCreate DESC";
+
+    return mysqli_fetch_all(mysqli_query($con, $sql), MYSQLI_ASSOC);
+}
+
+/**
+ * Возвращает определенное количетсво лотов с определенной позиции при поиске по пустой строке
+ * @param mysqli $con подключение к базе
+ * @param int $limit количетво записей
+ * @param int $offset позиция с которой начинается выборка
+ * 
+ * @return array список лотов
+ */
+function search_all_lot(mysqli $con, int $limit, int $offset): array|null
+{
+
+    $sql = "SELECT Lot.Id,`NameLot`, `StartPrise`, `Image`, Category.NameCategory, `DateEnd`
+    FROM `Lot`
+             INNER JOIN Category ON Lot.CategoryId = Category.Id
+    WHERE `DateEnd` >= CURRENT_DATE
+    ORDER BY `DateCreate` DESC
+    LIMIT ?
+    OFFSET ?;";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'ii', $limit, $offset);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    if ($res) {
+        return mysqli_fetch_all($res, MYSQLI_ASSOC);
+    } else {
+        return null;
+    }
+}
+
+/**
+ * Возвращает еоличетво лотов при поиске по апустой строке
+ * @param mysqli $con подключение к базе
+ * 
+ * @return array список лотов
+ */
+function search_all_lot_count(mysqli $con): int
+{
+    $sql = "SELECT Lot.Id
+    FROM `Lot`
+             INNER JOIN Category ON Lot.CategoryId = Category.Id
+    WHERE `DateEnd` >= CURRENT_DATE
+
+    ORDER BY `DateCreate` DESC";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_num_rows($result);
 }

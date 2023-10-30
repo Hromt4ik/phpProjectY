@@ -3,8 +3,8 @@
     <div class="container">
         <?php if ($lots): ?>
             <section class="lots">
-                <h2>Результаты поиска по запросу «<span>
-                        <?= isset($_GET['search']) ? $_GET['search'] : ""; ?>
+                <h2 class="<?php if ($_GET['search'] === ""): ?>visually-hidden<?php endif; ?>">Результаты поиска по запросу «<span>
+                        <?=$_GET['search']; ?>
                     </span>»</h2>
                 <ul class="lots__list">
 

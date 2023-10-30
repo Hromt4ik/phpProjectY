@@ -13,7 +13,7 @@
         $status_lot = "";
 
         if (strtotime($item['lot_date']) < time()) {
-          if ($item['is_win']) {
+          if (isset($item['is_win']) && $item['is_win']) {
             $status_lot = "Ставка выиграла";
             $class_row = "rates__item--win";
             $class = "timer--win";
@@ -29,9 +29,16 @@
             <div class="rates__img">
               <img src="<?= $item['pic_lot'] ?>" width="54" height="40" alt="">
             </div>
-            <h3 class="rates__title"><a href="lot.php?Id=<?= $item['LotId'] ?>">
-                <?= htmlspecialchars($item['lot_name']) ?>
-              </a></h3>
+            <div>
+              <h3 class="rates__title"><a href="lot.php?Id=<?= $item['LotId'] ?>">
+                  <?= htmlspecialchars($item['lot_name']) ?>
+                </a></h3>
+              <?php if (isset($item['is_win']) && $item['is_win']): ?>
+                <p>
+                  <?= htmlspecialchars($item['contact_user']) ?>
+                </p>
+              <?php endif; ?>
+            </div>
           </td>
           <td class="rates__category">
             <?= htmlspecialchars($item['category_name']) ?>
@@ -39,14 +46,14 @@
           <td class="rates__timer">
 
             <div class="timer <?= $class ?>">
-              <?php $date_end = ($status_lot==="") ?  get_dt_range($item['lot_date']): $status_lot?>
-              <?php if($status_lot ===""):?>
-              <div class=" <?php if ($date_end[0] < '24'): ?> timer--finishing <?php endif; ?>">
-                <?= "$date_end[0]:$date_end[1]" ?>
-              </div>
-              <?php else:?>
-              <?= htmlspecialchars($status_lot) ?>
-              <?php endif;?>
+              <?php $date_end = ($status_lot === "") ? get_dt_range($item['lot_date']) : $status_lot ?>
+              <?php if ($status_lot === ""): ?>
+                <div class=" <?php if ($date_end[0] < '24'): ?> timer--finishing <?php endif; ?>">
+                  <?= "$date_end[0]:$date_end[1]" ?>
+                </div>
+              <?php else: ?>
+                <?= htmlspecialchars($status_lot) ?>
+              <?php endif; ?>
             </div>
           </td>
           <td class="rates__price">

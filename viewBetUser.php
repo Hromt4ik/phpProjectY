@@ -22,13 +22,12 @@ if (!isset($_SESSION['is_auth']) || !$_SESSION['is_auth']) {
     $bets_my = bets_my($_SESSION['AuthorId'], $con);
 
 
-    for( $i = 0; $i < count($bets_my); $i++ ) {
+    for ($i = 0; $i < count($bets_my); $i++) {
         $bet = $bets_my[$i];
         $bet_win = bets_win($bet['LotId'], $con);
-
         $bets_my[$i]['is_win'] = $bet_win['Id'] === $bet['Id'];
+        $bets_my[$i]['contact_user'] = $bet_win['contact_user'];
     }
-
 
 
     $my_bets = include_template('userBet.php', ['nav' => $nav, 'bet_lots' => $bets_my]); 

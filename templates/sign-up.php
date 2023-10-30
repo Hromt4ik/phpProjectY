@@ -1,11 +1,9 @@
 <main>
     <?= $nav ?>
     <form class="form container <?php if ($errors): ?>form--invalid<?php endif; ?>" action="sign-ups.php" method="post"
-        autocomplete="off"> <!-- form
-        --invalid -->
+        autocomplete="off">
         <h2>Регистрация нового аккаунта</h2>
         <div class="form__item <?php if (isset($errors['email'])): ?>form__item--invalid<?php endif; ?>">
-            <!-- form__item--invalid -->
             <label for="email">E-mail <sup>*</sup></label>
             <input value="<?= getPostVal('email'); ?>" id="email" type="text" name="email" placeholder="Введите e-mail">
             <span class="form__error">

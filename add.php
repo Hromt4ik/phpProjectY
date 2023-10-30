@@ -39,14 +39,14 @@ if (!(isset($_SESSION['is_auth']) && $_SESSION['is_auth'])) {
 
         if (!isset($errors['lot-date'])) {
             if (!is_date_valid($_POST['lot-date']) || (time() >= strtotime($_POST['lot-date']))) {
-                $errors['lot-date'] = 'Дата не должна быть пустой или меньше текущей';
+                $errors['lot-date'] = 'Дата не должна быть пустой и меньше или равна текущей';
             }
         }
 
         if (!isset($errors['lot-rate'])) {
             if (!filter_var($_POST['lot-rate'], FILTER_VALIDATE_INT)) {
                 $errors['lot-rate'] = 'Цена должна быть натуральныим числом';
-            } elseif ($_POST['lot-rate'] < 0) {
+            } elseif ($_POST['lot-rate'] < 1) {
                 $errors['lot-rate'] = 'Цена должна быть больше 0';
             }
         }

@@ -7,7 +7,7 @@
             <!--заполните этот список из массива категорий-->
             <?php foreach ($categories as $item): ?>
                 <li class="promo__item promo__item--<?= ($item['SymbolCode']) ?>">
-                    <a class="promo__link" href="all-lots.php?id=<?=$item['Id']?>">
+                    <a class="promo__link" href="all-lots.php?id=<?= $item['Id'] ?>">
                         <?= htmlspecialchars($item['NameCategory']) ?>
                     </a>
                 </li>

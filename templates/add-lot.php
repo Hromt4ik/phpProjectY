@@ -1,11 +1,10 @@
 <main>
     <?= $nav ?>
     <form class="form form--add-lot container <?php if (!isset($errors)): ?>form--invalid<?php endif; ?> "
-        enctype="multipart/form-data" action="add.php" method="post"> <!-- form--invalid -->
+        enctype="multipart/form-data" action="add.php" method="post">
         <h2>Добавление лота</h2>
         <div class="form__container-two">
             <div class="form__item <?php if (isset($errors['lot-name'])): ?> form__item--invalid <?php endif; ?>">
-                <!-- form__item--invalid -->
                 <label for="lot-name">Наименование <sup>*</sup></label>
                 <input id="lot-name" type="text" value="<?= getPostVal('lot-name'); ?>" name="lot-name"
                     placeholder="Введите наименование лота">

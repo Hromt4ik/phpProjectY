@@ -9,16 +9,28 @@ $categories = get_categories($con);
 $nav = include_template('categories.php', ['categories' => $categories]);
 
 if (!empty($_GET)) {
-    
+
     $searchs = trim($_GET['search']);
     $search_str = isset($_GET['search']) ? $_GET['search'] : "";
-    $count_lot = search_lot_count($searchs, $con);
 
+    $count_lot = search_lot_count($searchs, $con);
+    $count_page = ceil($count_lot / LIMIT_ON_PAGE);
+    $curr_page = isset($_GET['page']) ? $_GET['page'] : 1;
+    $offset = ($curr_page - 1) * LIMIT_ON_PAGE;
+
+    if ($count_lot) {
+        $search_lot = search_lot($searchs, $con, LIMIT_ON_PAGE, $offset);
+    } else {
+        $search_lot = null;
+    }
+
+} else {
+    $count_lot = search_all_lot_count($con);
     $count_page = ceil($count_lot / LIMIT_ON_PAGE);
     $curr_page = isset($_GET['page']) ? $_GET['page'] : 1;
     $offset = ($curr_page - 1) * LIMIT_ON_PAGE;
     if ($count_lot) {
-        $search_lot = search_lot($searchs, $con, LIMIT_ON_PAGE, $offset);
+        $search_lot = search_all_lot($con, LIMIT_ON_PAGE, $offset);
     } else {
         $search_lot = null;
     }
