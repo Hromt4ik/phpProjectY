@@ -26,7 +26,7 @@ if (isset($_SESSION['is_auth']) && $_SESSION['is_auth']) {
     $errors = [];
     $required_fields = ['email', 'password', 'name', 'message'];
     
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         foreach ($required_fields as $field) {
             if (empty($_POST[$field])) {

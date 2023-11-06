@@ -55,7 +55,7 @@
                     </li>
                 <?php endfor; ?>
                 <li class="pagination-item pagination-item-next"><a
-                        href="searchs.php?search=<?= $search_str ?>&find=Найти&page=<?= ($curr_page = $count_page) ? $curr_page : $curr_page + 1 ?>">Вперед</a>
+                        href="searchs.php?search=<?= $search_str ?>&find=Найти&page=<?= (intval($curr_page) === intval($count_page)) ? $curr_page : $curr_page + 1 ?>">Вперед</a>
                 </li>
             </ul>
         <?php else: ?>

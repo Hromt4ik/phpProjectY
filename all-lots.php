@@ -14,8 +14,10 @@ $nav = include_template('categories.php', ['categories' => $categories, 'categor
 $count_lot = cat_lot_count($id, $con);
 $count_pages = ceil($count_lot / LIMIT);
 $curr_page = isset($_GET['page']) ? $_GET['page'] : 1;
+
 $offset = ($curr_page - OFFSET_ONE) * LIMIT;
 $lot_list = lot_list_cat($id, $con, LIMIT, $offset);
+
 $lots = include_template('lots.php', [
     'lots' => $lot_list,
     'categories' => $categories,

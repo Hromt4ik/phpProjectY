@@ -24,7 +24,7 @@ function format_price(int $num): string
 function get_dt_range(string $date): array
 {
     date_default_timezone_set("Asia/Yekaterinburg");
-    $minutes = floor(((strtotime($date) + (SECOND_IN_MINUTE * MINUTES_IN_HOUR * HOUR_IN_DAY)) - time()) / SECOND_IN_MINUTE);
+    $minutes = floor((strtotime($date)+ (HOUR_IN_DAY *MINUTES_IN_HOUR * SECOND_IN_MINUTE) - time()) / SECOND_IN_MINUTE);
     $hours = floor($minutes / MINUTES_IN_HOUR);
     $minutes = $minutes - ($hours * SECOND_IN_MINUTE);
     #добавляем одну минуту чтобы общее время в минутах было не 59, а 00
@@ -377,7 +377,7 @@ function bets_win(int $id_lot, mysqli $con): array|null
     INNER JOIN User As winer ON winer.Id = UserId 
     INNER JOIN Lot ON Bet.LotId = Lot.Id
     INNER JOIN User as Author on Author.Id = Lot.AuthorId
-    WHERE LotId = ? ORDER BY Bet.DateCreate DESC";
+    WHERE LotId = ? AND Lot.DateEnd < CURRENT_DATE() ORDER BY Bet.DateCreate DESC";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 'i', $id_lot);
     mysqli_stmt_execute($stmt);

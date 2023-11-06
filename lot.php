@@ -24,7 +24,7 @@ if (http_response_code() === 404) {
         $min_bet = $bets_lot[0]['Sum'] + $lot['StepBet'];
         $price = $bets_lot[0]['Sum'];
     }
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($_POST['cost'])) {
             $errors['cost'] = 'Поле не заполнено';
         }

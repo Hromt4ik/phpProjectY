@@ -25,8 +25,9 @@ if (!isset($_SESSION['is_auth']) || !$_SESSION['is_auth']) {
     for ($i = 0; $i < count($bets_my); $i++) {
         $bet = $bets_my[$i];
         $bet_win = bets_win($bet['LotId'], $con);
-        $bets_my[$i]['is_win'] = $bet_win['Id'] === $bet['Id'];
-        $bets_my[$i]['contact_user'] = $bet_win['contact_user'];
+
+        $bets_my[$i]['is_win'] =isset($bet_win['Id']) && $bet_win['Id'] === $bet['Id'];
+        $bets_my[$i]['contact_user'] = $bet_win['contact_user'] ?? "";
     }
 
 
