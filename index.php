@@ -12,7 +12,6 @@ $nav = include_template('categories.php', ['categories' => $categories]);
 
 foreach ($lot_list_all as $lot) {
     $bet_list = bets_win($lot['Id'], $con);
-
     if ($bet_list !== null) {
         add_winer($lot['Id'], $bet_list['UserId'], $con);
     }

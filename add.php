@@ -91,7 +91,7 @@ if (!(isset($_SESSION['is_auth']) && $_SESSION['is_auth'])) {
                     $errors['image'] = "Картинка должна быть в формате *.png, *.jpeg или *.jpg";
                 }
             } else {
-                $errors['image'] = "Добавте изображение";
+                $errors['image'] = "Добавьте изображение";
             }
         }
         if (empty($errors)) {
@@ -115,6 +115,7 @@ if (!(isset($_SESSION['is_auth']) && $_SESSION['is_auth'])) {
             );
 
             header('Location: /lot.php?Id=' . $addLot);
+            exit();
 
         } else {
             $page_content = include_template('add-lot.php', ['errors' => $errors, 'nav' => $nav, 'categories' => $categories]);

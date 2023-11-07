@@ -78,6 +78,7 @@ if (isset($_SESSION['is_auth']) && $_SESSION['is_auth']) {
             $message = $_POST['message'];
             add_user($email, $name, $password, $message, $con);
             header('Location: /sign-in.php');
+            exit();
         }
     }
 
