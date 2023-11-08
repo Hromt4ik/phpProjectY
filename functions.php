@@ -153,17 +153,19 @@ function get_users(mysqli $con): array
  */
 function add_user(string $email, string $name, string $password, string $contact_info, mysqli $con): int
 {
- 
+    try{
     $temp_password = password_hash($password, PASSWORD_DEFAULT);
     $sql = "INSERT INTO User(`Email`, `NameUser`, `PasswordUser`, `ContactInfo`)
             VALUES(?,?,?,?);";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 'ssss', $email, $name, $temp_password, $contact_info);
     mysqli_stmt_execute($stmt);
+    } catch(mysqli_sql_exception $e) {
+        return 0;
+    }
     return $con->insert_id;
 
 }
-
 
 /**
  * Возвращает пользователя, null если пользователь не найден
