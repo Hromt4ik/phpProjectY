@@ -6,7 +6,7 @@ require_once('init.php');
 $categories = get_categories($con);
 $nav = include_template('categories.php', ['categories' => $categories]);
 
-$id = ($_GET['Id']  && filter_var($_GET['Id'], FILTER_VALIDATE_INT)) ? $_GET['Id'] : -1;
+$id = (isset($_GET['Id'])   && filter_var($_GET['Id'], FILTER_VALIDATE_INT)) ? $_GET['Id'] : -1;
 $lot = get_lot_by_id($con, $id);
 
 $errors = [];
@@ -39,6 +39,7 @@ if (http_response_code() === 404) {
             if (!isset($errors['cost'])) {
                 add_bet($id, $_SESSION['AuthorId'], (int) $_POST['cost'], $con);
                 header('Location: /lot.php?Id=' . $id);
+                exit();
             }
         }
     }
