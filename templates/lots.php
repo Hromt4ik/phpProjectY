@@ -43,21 +43,27 @@
                     <?php endforeach; ?>
                 </ul>
 
-                <ul class="pagination-list">
-                    <li class="pagination-item pagination-item-prev"><a
-                            href="all-lots.php?id=<?= $lots[0]["CategoryId"] ?>&page=<?= $curr_page <= 1 ? 1 : $curr_page - 1 ?>">Назад</a>
-                    </li>
-                    <?php for ($i = 1; $i <= $count_page; $i++): ?>
-                        <li class="pagination-item <?= intval($curr_page) === $i ? "pagination-item-active" : "" ?>"><a
-                                href="all-lots.php?id=<?= $lots[0]["CategoryId"] ?>&page=<?= $i ?>">
-                                <?= $i ?>
-                            </a></li>
-                    <?php endfor; ?>
-                    <li class="pagination-item pagination-item-next"><a
-                            href="all-lots.php?id=<?= $lots[0]["CategoryId"] ?>&page=<?= $curr_page >= $count_page ? $curr_page : $curr_page + 1 ?>">Вперед</a>
-                    </li>
+                <?php if ($count_page > 1): ?>
+                    <ul class="pagination-list">
+                        <li class="pagination-item pagination-item-prev">
+                          <?php if ($curr_page > 1): ?><a
+                                    href="all-lots.php?Id=<?= $lots[0]["CategoryId"] ?>&page=<?= ($curr_page > 1) ? $curr_page - 1 : $curr_page ?>">Назад</a>
+                            <?php endif; ?>
+                        </li>
+                        <?php for ($i = 1; $i <= $count_page; $i++): ?>
+                            <li class="pagination-item <?= intval($curr_page) === $i ? "pagination-item-active" : "" ?>"><a
+                                    href="all-lots.php?Id=<?= $lots[0]["CategoryId"] ?>&page=<?= $i ?>">
+                                    <?= $i ?>
+                                </a></li>
+                        <?php endfor; ?>
+                        <li class="pagination-item pagination-item-next">
+                            <?php if ($curr_page !== $count_page): ?><a
+                                    href="all-lots.php?Id=<?= $lots[0]["CategoryId"] ?>&page=<?= ($curr_page === $count_page) ? $curr_page : $curr_page + 1 ?>">Вперед</a>
+                            <?php endif; ?>
+                        </li>
 
-                </ul>
+                    </ul>
+                <?php endif; ?>
         </div>
     <?php else: ?>
         <h2>По вашему запросу ничего не найдено</h2>

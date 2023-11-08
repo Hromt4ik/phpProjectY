@@ -3,8 +3,9 @@
     <div class="container">
         <?php if ($lots): ?>
             <section class="lots">
-                <h2 class="<?php if ($_GET['search'] === ""): ?>visually-hidden<?php endif; ?>">Результаты поиска по запросу «<span>
-                        <?=$_GET['search']; ?>
+                <h2 class="<?php if ($_GET['search'] === ""): ?>visually-hidden<?php endif; ?>">Результаты поиска по запросу
+                    «<span>
+                        <?= $_GET['search']; ?>
                     </span>»</h2>
                 <ul class="lots__list">
 
@@ -17,7 +18,7 @@
                                 <span class="lot__category">
                                     <?= htmlspecialchars($item['NameCategory']) ?>
                                 </span>
-                                <h3 class="lot__title"><a class="text-link" href="lot.php?id=<?= $item['Id'] ?>">
+                                <h3 class="lot__title"><a class="text-link" href="lot.php?Id=<?= $item['Id'] ?>">
                                         <?= htmlspecialchars($item['NameLot']) ?>
                                     </a></h3>
                                 <div class="lot__state">
@@ -42,22 +43,37 @@
                     <?php endforeach; ?>
                 </ul>
             </section>
+
+
+         
+            <?php if ($count_page > 1): ?>
+                
             <ul class="pagination-list">
+
                 <li class="pagination-item pagination-item-prev">
-                    <a
-                        href="searchs.php?search=<?= $search_str ?>&find=Найти&page=<?= ($curr_page > 1) ? $curr_page - 1 : $curr_page ?>">Назад</a>
+
+                    <?php if ($curr_page > 1): ?>
+                        <a
+                            href="searchs.php?search=<?= $search_str ?>&find=Найти&page=<?= ($curr_page > 1) ? $curr_page - 1 : $curr_page ?>">Назад</a>
+                    <?php endif; ?>
                 </li>
+
                 <?php for ($i = 1; $i <= $count_page; $i++): ?>
-                    <li class="pagination-item <?= intval($curr_page) === $i ? "pagination-item-active" : "" ?>">
+                    
+                    <li class="pagination-item <?= $curr_page === $i ? "pagination-item-active" : "" ?>">
                         <a href="searchs.php?search=<?= $search_str ?>&find=Найти&page=<?= $i ?>">
                             <?= $i ?>
                         </a>
                     </li>
                 <?php endfor; ?>
-                <li class="pagination-item pagination-item-next"><a
-                        href="searchs.php?search=<?= $search_str ?>&find=Найти&page=<?= (intval($curr_page) === intval($count_page)) ? $curr_page : $curr_page + 1 ?>">Вперед</a>
+                <li class="pagination-item pagination-item-next">
+                    <?php if ($curr_page !== $count_page): ?><a
+                            href="searchs.php?search=<?= $search_str ?>&find=Найти&page=<?= ($curr_page === $count_page) ? $curr_page : $curr_page + 1 ?>">Вперед</a>
+                    <?php endif; ?>
                 </li>
             </ul>
+            <?php endif; ?>
+
         <?php else: ?>
             <h2>Результаты поиска по запросу «<span>
                     <?= $search_str ?>
