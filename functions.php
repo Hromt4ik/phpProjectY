@@ -148,15 +148,20 @@ function get_users(mysqli $con): array
  * @param string $password пароль пользователя
  * @param int $contact_info контактная информация
  * @param mysqli $con подключение к базе
+ * 
+ * @return int id пользователя или 0 если пользователь не добавлен
  */
-function add_user(string $email, string $name, string $password, string $contact_info, mysqli $con): void
+function add_user(string $email, string $name, string $password, string $contact_info, mysqli $con): int
 {
+ 
     $temp_password = password_hash($password, PASSWORD_DEFAULT);
     $sql = "INSERT INTO User(`Email`, `NameUser`, `PasswordUser`, `ContactInfo`)
             VALUES(?,?,?,?);";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 'ssss', $email, $name, $temp_password, $contact_info);
     mysqli_stmt_execute($stmt);
+    return $con->insert_id;
+
 }
 
 

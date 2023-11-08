@@ -108,33 +108,15 @@ if (!(isset($_SESSION['is_auth']) && $_SESSION['is_auth'])) {
                 $_POST['category'],
                 $con
             );
-
-            $lot = get_lot_by_id(
-                $con,
-                $addLot
-            );
-
             header('Location: /lot.php?Id=' . $addLot);
             exit();
-
-        } else {
-            $page_content = include_template('add-lot.php', ['errors' => $errors, 'nav' => $nav, 'categories' => $categories]);
-            $layout = include_template('layout.php', [
-                'title' => 'Добавление',
-                'nav' => $nav,
-                'contetnt' => $page_content
-            ]);
-            print($layout);
         }
-    } else {
-
-
-        $page_content = include_template('add-lot.php', ['errors' => $errors, 'nav' => $nav, 'categories' => $categories]);
-        $layout = include_template('layout.php', [
-            'title' => 'Добавление',
-            'nav' => $nav,
-            'contetnt' => $page_content
-        ]);
-        print($layout);
     }
+    $page_content = include_template('add-lot.php', ['errors' => $errors, 'nav' => $nav, 'categories' => $categories]);
+    $layout = include_template('layout.php', [
+        'title' => 'Добавление',
+        'nav' => $nav,
+        'contetnt' => $page_content
+    ]);
+    print($layout);
 }

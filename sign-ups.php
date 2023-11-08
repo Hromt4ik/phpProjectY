@@ -22,26 +22,16 @@ if (isset($_SESSION['is_auth']) && $_SESSION['is_auth']) {
     print($layout);
 } else {
 
-    $user_list = get_users($con);
     $errors = [];
     $required_fields = ['email', 'password', 'name', 'message'];
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
         foreach ($required_fields as $field) {
             if (empty($_POST[$field])) {
                 $errors[$field] = 'Поле не заполнено';
             }
         }
 
-        if (!isset($errors['email'])) {
-            $user_email = [];
-
-            if (in_array($_POST['email'], $user_list)) {
-                $errors['email'] = 'Данный E-mail уже используеться!';
-            }
-            ;
-        }
         if (!isset($errors['email'])) {
             if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
                 $errors['email'] = 'E-mail введен некорректно!';
@@ -76,9 +66,12 @@ if (isset($_SESSION['is_auth']) && $_SESSION['is_auth']) {
             $name = $_POST['name'];
             $password = $_POST['password'];
             $message = $_POST['message'];
-            add_user($email, $name, $password, $message, $con);
-            header('Location: /sign-in.php');
-            exit();
+            $id_user = add_user($email, $name, $password, $message, $con);
+            if($id_user){
+                header('Location: /sign-in.php');
+                exit();
+            }
+            $errors['email'] = 'Данный E-mail уже используеться!';    
         }
     }
 

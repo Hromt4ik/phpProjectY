@@ -6,7 +6,7 @@ require_once('init.php');
 $categories = get_categories($con);
 $nav = include_template('categories.php', ['categories' => $categories]);
 
-$id = $_GET['Id'] ?? -1;
+$id = ($_GET['Id']  && filter_var($_GET['Id'], FILTER_VALIDATE_INT)) ? $_GET['Id'] : -1;
 $lot = get_lot_by_id($con, $id);
 
 $errors = [];
