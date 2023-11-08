@@ -7,7 +7,7 @@ require_once('init.php');
 
 $categories = get_categories($con);
 $nav = include_template('categories.php', ['categories' => $categories]);
-if (!isset($_SESSION['is_auth']) || !$_SESSION['is_auth']) {
+if (!isset($_SESSION['is_auth'])) {
     http_response_code(403);
     $detail = include_template('403.php', ['nav' => $nav]);
     print(include_template('layout.php', [
