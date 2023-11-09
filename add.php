@@ -60,7 +60,7 @@ if (!isset($_SESSION['is_auth'])) {
                 $errors['lot-name'] = 'Значение должно быть меньше ' . MAX_NAME_LENGHT . ' символов';
             }
             if ($len < MIN_TITLE_LENGHT) {
-                $errors['lot-name'] = 'Значение должно быть меньше ' . MIN_TITLE_LENGHT . ' символов';
+                $errors['lot-name'] = 'Значение должно быть больше ' . MIN_TITLE_LENGHT . ' символов';
             }
         }
 
@@ -70,7 +70,7 @@ if (!isset($_SESSION['is_auth'])) {
                 $errors['message'] = 'Значение должно быть меньше ' . MAX_DETAIL_LENGHT . ' символов';
             }
             if ($len < MIN_TITLE_LENGHT) {
-                $errors['message'] = 'Значение должно быть меньше ' . MIN_TITLE_LENGHT . ' символов';
+                $errors['message'] = 'Значение должно быть больше ' . MIN_TITLE_LENGHT . ' символов';
             }
         }
 

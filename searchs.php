@@ -18,7 +18,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
     $count_page = intval(ceil($count_lot / LIMIT_ON_PAGE));
     $curr_page = intval((isset($_GET['page']) && filter_var($_GET['page'], FILTER_VALIDATE_INT)) ? $_GET['page'] : 1);
     
-    if($curr_page > $count_page || $curr_page < 0 || is_string($curr_page)) {
+    if($curr_page > $count_page || $curr_page < 0) {
         $curr_page = 1;
     }
     
@@ -36,7 +36,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
     $count_page = intval(ceil($count_lot / LIMIT_ON_PAGE));
     $curr_page = intval((isset($_GET['page']) && filter_var($_GET['page'], FILTER_VALIDATE_INT)) ? $_GET['page'] : 1);
 
-    if($curr_page > $count_page || $curr_page < 0 || is_string($curr_page)) {
+    if($curr_page > $count_page || $curr_page < 0) {
         $curr_page = 1;
     }
 

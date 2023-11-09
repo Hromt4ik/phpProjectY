@@ -11,7 +11,7 @@ const MAX_CONTACT = 300;
 $category_list = get_categories($con);
 $nav = include_template('categories.php', ['categories' => $category_list]);
 
-if (isset($_SESSION['is_auth']) && $_SESSION['is_auth']) {
+if (isset($_SESSION['is_auth'])) {
     http_response_code(403);
     $page_content = include_template('403.php', ['nav' => $nav]);
     $layout = include_template('layout.php', [

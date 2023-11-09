@@ -20,7 +20,6 @@ if (!isset($_SESSION['is_auth'])) {
 
     $bets_my = bets_my($_SESSION['AuthorId'], $con);
 
-
     for ($i = 0; $i < count($bets_my); $i++) {
         $bet = $bets_my[$i];
         $bet_win = bets_win($bet['LotId'], $con);

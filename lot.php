@@ -37,7 +37,7 @@ if (http_response_code() === 404) {
                 }
             }
             if (!isset($errors['cost'])) {
-                add_bet($id, $_SESSION['AuthorId'], (int) $_POST['cost'], $con);
+                add_bet($id, $_SESSION['AuthorId'],  intval($_POST['cost']), $con);
                 header('Location: /lot.php?Id=' . $id);
                 exit();
             }
